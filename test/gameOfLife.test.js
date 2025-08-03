@@ -21,6 +21,24 @@ import gameOfLife from "../scripts/gameOfLife.js";
     assert("layout is a 2D array of booleans", life.layout.every(nestedArray => nestedArray.every(entry => typeof entry === "boolean")));
   });
 
+  test("specified cells are set to `true` on initialising", () => {
+    const xLength = 5;
+    const yLength = 4;
+    const liveCells = [ [0, 2], [1, 2], [3, 3] ];
+    const life = gameOfLife(xLength, yLength, liveCells);
+
+    assert("live cells in grid contain true", liveCells.every(([x, y]) => life.layout[x][y] === true));
+    assert("dead cells in grid contain false", () => {
+      for (let i = 0; i < xLength; i++) {
+        for (let j = 0; j < yLength; j++) {
+          if (liveCells.find(([x, y]) => x === i && y === j)) continue; // ignore live cells
+          if (life.layout[i][j] === true) return false;
+        }
+      }
+      return true;
+    });
+  });
+
   console.info("\n--- TEST RUN COMPLETE ---\n");
 
 })();

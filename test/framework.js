@@ -1,10 +1,10 @@
 export const test = (name, testFunction) => {
   try {
     testFunction();
-    console.log(`PASS : [${name}]`);
+    console.log(`PASS : ${name}`);
   } catch (error) {
     if (error instanceof AssertionFailError) {
-      console.warn(`FAIL : [${name}]`);
+      console.warn(`FAIL : ${name}`);
       console.info(`Test failed on assertion: ${error.message}`);
       console.info(error.stack.split(/\n/)[2]);
     } else {
