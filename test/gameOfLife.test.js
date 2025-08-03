@@ -114,6 +114,60 @@ import { gameOfLife, gameOfLifeFrom2dArray } from "../scripts/gameOfLife.js";
     );
   });
 
+  test("a hollow square of live cells survives when progressing", () => {
+    const life = gameOfLifeFrom2dArray([
+      [1,1,1,1],
+      [1,0,0,1],
+      [1,0,0,1],
+      [1,1,1,1],
+    ]);
+
+    life.stepForward();
+
+    assertArrayEquivalence("layout contains the expected live cells",
+      life.layout,
+      [
+        [true ,true ,true ,true ],
+        [true ,false,false,true ],
+        [true ,false,false,true ],
+        [true ,true ,true ,true ],
+      ]
+    );
+  });
+
+  test("a simple 'plus' layout evolves in stages", () => {
+    const life = gameOfLifeFrom2dArray([
+      [0,1,0],
+      [1,1,1],
+      [0,1,0],
+    ]);
+
+    life.stepForward();
+    assertArrayEquivalence("layout contains the expected live cells",
+      life.layout,
+      [
+        [true ,true ,true ],
+        [true ,false,true ],
+        [true ,true ,true ],
+      ]
+    );
+
+    life.stepForward();
+    assertArrayEquivalence("layout still contains the same live cells",
+      life.layout,
+      [
+        [true ,false,true ],
+        [false,false,false],
+        [true ,false,true ],
+      ]
+    );
+
+    life.stepForward();
+    assert("layout contains only false values",
+      life.layout.every(row => row.every(cell => cell === false))
+    );
+  });
+
   console.info("\n--- TEST RUN COMPLETE ---\n");
 
 })();
