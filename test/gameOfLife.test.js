@@ -1,9 +1,13 @@
-import { assert, test } from "./framework.js";
-import gameOfLife, { gameOfLifeFrom2dArray } from "../scripts/gameOfLife.js";
+import { assert, assertArrayEquivalence, test } from "./framework.js";
+import { gameOfLife, gameOfLifeFrom2dArray } from "../scripts/gameOfLife.js";
 
 (() => {
 
   console.info("\n--- BEGIN TEST RUN ---\n")
+
+  // Setting up the game object
+
+  console.info("TESTING GAME SETUP\n")
 
   test("gameOfLife output contains a layout grid of the specified size", () => {
     const xSize = 5;
@@ -46,21 +50,68 @@ import gameOfLife, { gameOfLifeFrom2dArray } from "../scripts/gameOfLife.js";
       [0,0,0,1,0],
       [0,0,0,0,0],
     ];
-    const liveCells = [[1, 1], [2, 1], [3, 2]];
     const life = gameOfLifeFrom2dArray(numberLayout);
 
-    liveCells.forEach(([x, y]) => {
-      assert(`layout contains live cell [${x}, ${y}]`, life.layout[y][x] === true)
-    });
-    assert("dead cells in grid contain false", () => {
-      for (let x1 = 0; x1 < 5; x1++) {
-        for (let y1 = 0; y1 < 4; y1++) {
-          if (liveCells.find(([x, y]) => x === x1 && y === y1)) continue; // ignore live cells
-          if (life.layout[y1][x1] === true) return false;
-        }
-      }
-      return true;
-    });
+    assertArrayEquivalence("layout contains the expected live cells",
+      life.layout,
+      [
+        [false,false,false,false,false],
+        [false,true ,true ,false,false],
+        [false,false,false,true ,false],
+        [false,false,false,false,false],
+      ]
+    );
+  });
+
+  // Progressing game state
+
+  console.info("\nTESTING STEP FORWARD\n")
+
+  test("a single live cell is killed when progressing", () => {
+    const life = gameOfLifeFrom2dArray([
+      [0,0,0],
+      [0,1,0],
+      [0,0,0],
+    ]);
+
+    life.stepForward();
+
+    assert("layout contains only false values",
+      life.layout.every(row => row.every(cell => cell === false))
+    );
+  });
+
+  test("two adjacent live cells are killed when progressing", () => {
+    const life = gameOfLifeFrom2dArray([
+      [0,0,0],
+      [1,1,0],
+      [0,0,0],
+    ]);
+
+    life.stepForward();
+
+    assert("layout contains only false values",
+      life.layout.every(row => row.every(cell => cell === false))
+    );
+  });
+
+  test("a square of live cells survives when progressing", () => {
+    const life = gameOfLifeFrom2dArray([
+      [1,1,0],
+      [1,1,0],
+      [0,0,0],
+    ]);
+
+    life.stepForward();
+
+    assertArrayEquivalence("layout contains the expected live cells",
+      life.layout,
+      [
+        [true ,true ,false],
+        [true ,true ,false],
+        [false,false,false],
+      ]
+    );
   });
 
   console.info("\n--- TEST RUN COMPLETE ---\n");

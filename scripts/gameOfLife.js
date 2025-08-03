@@ -1,3 +1,5 @@
+import Life from "./Life.js";
+
 /**
  * Creates a representation of the game area, with each cell set to live (boolean true) or dead (false).
  *
@@ -17,7 +19,7 @@ export const gameOfLife = (xLength, yLength, liveCells = []) => {
 
   liveCells.forEach(([x, y]) => layout[y][x] = true);
 
-  return { layout };
+  return new Life(layout);
 }
 
 /**
@@ -39,7 +41,7 @@ export const gameOfLife = (xLength, yLength, liveCells = []) => {
  */
 export const gameOfLifeFrom2dArray = (layoutArray) => {
   const layout = layoutArray.map(row => row.map(cell => !!cell));
-  return { layout };
+  return new Life(layout);
 }
 
 export default gameOfLife;
