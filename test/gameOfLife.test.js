@@ -5,16 +5,20 @@ import gameOfLife from "../scripts/gameOfLife.js";
 
   console.info("\n--- BEGIN TEST RUN ---\n")
 
-  test("gameOfLife output contains a layout grid", () => {
-    const life = gameOfLife();
+  test("gameOfLife output contains a layout grid of the specified size", () => {
+    const xLength = 5;
+    const yLength = 4;
+    const life = gameOfLife(xLength, yLength);
+
     assert("layout is an array", life.layout instanceof Array);
+    assert("layout has the specified horizontal length", life.layout.length === xLength);
+
     assert("layout is a 2D array", life.layout.every(entry => entry instanceof Array));
-    assert("layout is a 2D array of booleans", life.layout.every(entry => entry.every(nestedArray => typeof nestedArray === "boolean")));
-    assert("all nested arrays are  the same length", () => {
-      if (life.layout.length < 1) return true;
-      const refLength = life.layout[0].length;
-      return life.layout.every(nestedArray => nestedArray.length === refLength);
-    })
+    assert("all nested arrays have the specified vertical length", () => {
+      return life.layout.every(nestedArray => nestedArray.length === yLength);
+    });
+
+    assert("layout is a 2D array of booleans", life.layout.every(nestedArray => nestedArray.every(entry => typeof entry === "boolean")));
   });
 
   console.info("\n--- TEST RUN COMPLETE ---\n");
