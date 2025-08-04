@@ -1,5 +1,5 @@
 import { assert, assertArrayEquivalence, assertLayoutsMatch, test } from "./framework.js";
-import { gameOfLife, gameOfLifeFrom2dArray, gameOfLifeFromMultilineString } from "../scripts/gameOfLife.js";
+import Life from "../scripts/Life.js";
 
 (() => {
 
@@ -12,7 +12,7 @@ import { gameOfLife, gameOfLifeFrom2dArray, gameOfLifeFromMultilineString } from
   test("gameOfLife output contains a layout grid of the specified size", () => {
     const xSize = 5;
     const ySize = 4;
-    const life = gameOfLife(xSize, ySize);
+    const life = Life.fromCoordinates(xSize, ySize);
 
     assert("layout is an array", life.layout instanceof Array);
     assert("layout has the specified vertical size", life.layout.length === ySize);
@@ -29,7 +29,7 @@ import { gameOfLife, gameOfLifeFrom2dArray, gameOfLifeFromMultilineString } from
     const xSize = 5;
     const ySize = 4;
     const liveCells = [ [0, 2], [1, 2], [3, 3] ];
-    const life = gameOfLife(xSize, ySize, liveCells);
+    const life = Life.fromCoordinates(xSize, ySize, liveCells);
 
     assert("live cells in grid contain true", liveCells.every(([x, y]) => life.layout[y][x] === true));
     assert("dead cells in grid contain false", () => {
@@ -50,7 +50,7 @@ import { gameOfLife, gameOfLifeFrom2dArray, gameOfLifeFromMultilineString } from
       [0,0,0,1,0],
       [0,0,0,0,0],
     ];
-    const life = gameOfLifeFrom2dArray(numberLayout);
+    const life = Life.from2dArray(numberLayout);
 
     assertArrayEquivalence("layout contains the expected live cells",
       life.layout,
@@ -67,7 +67,7 @@ import { gameOfLife, gameOfLifeFrom2dArray, gameOfLifeFromMultilineString } from
     const stringLayout = `00000
                           10010
                           11001`;
-    const life = gameOfLifeFromMultilineString(stringLayout);
+    const life = Life.fromMultilineString(stringLayout);
 
     assertArrayEquivalence("layout contains the expected live cells",
       life.layout,
@@ -83,7 +83,7 @@ import { gameOfLife, gameOfLifeFrom2dArray, gameOfLifeFromMultilineString } from
     const stringLayout = `0 0 1 0 0
                           1 0 0 1 0
                           1 1 0 0 1`;
-    const life = gameOfLifeFromMultilineString(stringLayout);
+    const life = Life.fromMultilineString(stringLayout);
 
     assertArrayEquivalence("layout contains the expected live cells",
       life.layout,
@@ -100,11 +100,10 @@ import { gameOfLife, gameOfLifeFrom2dArray, gameOfLifeFromMultilineString } from
   console.info("\nTESTING STEP FORWARD\n")
 
   test("a single live cell is killed when progressing", () => {
-    const life = gameOfLifeFrom2dArray([
-      [0,0,0],
-      [0,1,0],
-      [0,0,0],
-    ]);
+    const life = Life.fromMultilineString(
+      `0 0 0
+       0 1 0
+       0 0 0`);
 
     life.stepForward();
 
@@ -114,11 +113,10 @@ import { gameOfLife, gameOfLifeFrom2dArray, gameOfLifeFromMultilineString } from
   });
 
   test("two adjacent live cells are killed when progressing", () => {
-    const life = gameOfLifeFrom2dArray([
-      [0,0,0],
-      [1,1,0],
-      [0,0,0],
-    ]);
+    const life = Life.fromMultilineString(
+      `0 0 0
+       1 1 0
+       0 0 0`);
 
     life.stepForward();
 
@@ -128,7 +126,7 @@ import { gameOfLife, gameOfLifeFrom2dArray, gameOfLifeFromMultilineString } from
   });
 
   test("a square of live cells survives when progressing", () => {
-    const life = gameOfLifeFromMultilineString(
+    const life = Life.fromMultilineString(
       `1 1 0
        1 1 0
        0 0 0`);
@@ -144,7 +142,7 @@ import { gameOfLife, gameOfLifeFrom2dArray, gameOfLifeFromMultilineString } from
   });
 
   test("a hollow square of live cells survives when progressing", () => {
-    const life = gameOfLifeFromMultilineString(
+    const life = Life.fromMultilineString(
       `1 1 1 1
        1 0 0 1
        1 0 0 1
@@ -162,7 +160,7 @@ import { gameOfLife, gameOfLifeFrom2dArray, gameOfLifeFromMultilineString } from
   });
 
   test("a simple 'plus' layout evolves in stages", () => {
-    const life = gameOfLifeFromMultilineString(
+    const life = Life.fromMultilineString(
       `0 0 0 0 0
        0 0 1 0 0
        0 1 1 1 0

@@ -1,4 +1,4 @@
-import { gameOfLifeFromMultilineString } from "../scripts/gameOfLife.js"
+import Life from "../scripts/Life.js";
 
 export const test = (name, testFunction) => {
   try {
@@ -43,8 +43,8 @@ export const assertArrayEquivalence = (message, arrayToTest, expectedArray) => {
 export const assertLayoutsMatch = (message, layoutToTest, expectedLayout) => {
   assertArrayEquivalence(
     message,
-    layoutToTest instanceof Array ? layoutToTest : gameOfLifeFromMultilineString(layoutToTest).layout,
-    expectedLayout instanceof Array ? expectedLayout : gameOfLifeFromMultilineString(expectedLayout).layout
+    layoutToTest instanceof Array ? layoutToTest : Life.fromMultilineString(layoutToTest).layout,
+    expectedLayout instanceof Array ? expectedLayout : Life.fromMultilineString(expectedLayout).layout
   )
 }
 
