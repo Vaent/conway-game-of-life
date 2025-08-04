@@ -3,7 +3,7 @@ export class Life {
     this.layout = layout;
   }
 
-  stepForward = () => {
+  stepForward() {
     const nextLayout = this.layout.map((row, yIndex) =>
       row.map((cell, xIndex) => {
         let liveNeighbourCount = 0;

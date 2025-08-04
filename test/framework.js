@@ -1,3 +1,5 @@
+import { gameOfLifeFromMultilineString } from "../scripts/gameOfLife.js"
+
 export const test = (name, testFunction) => {
   try {
     testFunction();
@@ -27,6 +29,23 @@ export const assertArrayEquivalence = (message, arrayToTest, expectedArray) => {
       assert(message, element === expectedElement);
     }
   });
+}
+
+/**
+ * Compares two layout representations, which can be either the Array internal representation used by Life
+ * or a string representation accepted by the gameOfLifeFromMultilineString convenience function.
+ * String representations will be converted to Array representation before comparing the two.
+ *
+ * @param {string} message
+ * @param {string|Array} layoutToTest
+ * @param {string|Array} expectedLayout
+ */
+export const assertLayoutsMatch = (message, layoutToTest, expectedLayout) => {
+  assertArrayEquivalence(
+    message,
+    layoutToTest instanceof Array ? layoutToTest : gameOfLifeFromMultilineString(layoutToTest).layout,
+    expectedLayout instanceof Array ? expectedLayout : gameOfLifeFromMultilineString(expectedLayout).layout
+  )
 }
 
 export const fail = (message) => {

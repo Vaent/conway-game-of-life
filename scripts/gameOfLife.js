@@ -44,4 +44,13 @@ export const gameOfLifeFrom2dArray = (layoutArray) => {
   return new Life(layout);
 }
 
+export const gameOfLifeFromMultilineString = (layoutString) => {
+  const layoutRows = layoutString.split(/\s*?\n\s*/);
+  const layout = layoutRows.map(row => row.split("")
+    .map(c => parseInt(c))
+    .filter(c => !isNaN(c))
+    .map(c => !!c));
+  return new Life(layout);
+}
+
 export default gameOfLife;

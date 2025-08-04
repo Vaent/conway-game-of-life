@@ -1,5 +1,5 @@
-import { assert, assertArrayEquivalence, test } from "./framework.js";
-import { gameOfLife, gameOfLifeFrom2dArray } from "../scripts/gameOfLife.js";
+import { assert, assertArrayEquivalence, assertLayoutsMatch, test } from "./framework.js";
+import { gameOfLife, gameOfLifeFrom2dArray, gameOfLifeFromMultilineString } from "../scripts/gameOfLife.js";
 
 (() => {
 
@@ -43,7 +43,7 @@ import { gameOfLife, gameOfLifeFrom2dArray } from "../scripts/gameOfLife.js";
     });
   });
 
-  test("gameOfLifeFrom2dArray converts truthy/falsy values to true/false in layout", () => {
+  test("gameOfLifeFrom2dArray converts ones/zeroes to true/false in layout", () => {
     const numberLayout = [
       [0,0,0,0,0],
       [0,1,1,0,0],
@@ -62,6 +62,38 @@ import { gameOfLife, gameOfLifeFrom2dArray } from "../scripts/gameOfLife.js";
       ]
     );
   });
+
+  test("gameOfLifeFromMultilineString converts ones/zeroes to true/false in layout", () => {
+    const stringLayout = `00000
+                          10010
+                          11001`;
+    const life = gameOfLifeFromMultilineString(stringLayout);
+
+    assertArrayEquivalence("layout contains the expected live cells",
+      life.layout,
+      [
+        [false,false,false,false,false],
+        [true ,false,false,true ,false],
+        [true ,true ,false,false,true ],
+      ]
+    );
+  })
+
+  test("gameOfLifeFromMultilineString strips spaces from input", () => {
+    const stringLayout = `0 0 1 0 0
+                          1 0 0 1 0
+                          1 1 0 0 1`;
+    const life = gameOfLifeFromMultilineString(stringLayout);
+
+    assertArrayEquivalence("layout contains the expected live cells",
+      life.layout,
+      [
+        [false,false,true ,false,false],
+        [true ,false,false,true ,false],
+        [true ,true ,false,false,true ],
+      ]
+    );
+  })
 
   // Progressing game state
 
@@ -96,75 +128,85 @@ import { gameOfLife, gameOfLifeFrom2dArray } from "../scripts/gameOfLife.js";
   });
 
   test("a square of live cells survives when progressing", () => {
-    const life = gameOfLifeFrom2dArray([
-      [1,1,0],
-      [1,1,0],
-      [0,0,0],
-    ]);
+    const life = gameOfLifeFromMultilineString(
+      `1 1 0
+       1 1 0
+       0 0 0`);
 
     life.stepForward();
 
-    assertArrayEquivalence("layout contains the expected live cells",
+    assertLayoutsMatch("layout contains the expected live cells",
       life.layout,
-      [
-        [true ,true ,false],
-        [true ,true ,false],
-        [false,false,false],
-      ]
+      `1 1 0
+       1 1 0
+       0 0 0`
     );
   });
 
   test("a hollow square of live cells survives when progressing", () => {
-    const life = gameOfLifeFrom2dArray([
-      [1,1,1,1],
-      [1,0,0,1],
-      [1,0,0,1],
-      [1,1,1,1],
-    ]);
+    const life = gameOfLifeFromMultilineString(
+      `1 1 1 1
+       1 0 0 1
+       1 0 0 1
+       1 1 1 1`);
 
     life.stepForward();
 
-    assertArrayEquivalence("layout contains the expected live cells",
+    assertLayoutsMatch("layout contains the expected live cells",
       life.layout,
-      [
-        [true ,true ,true ,true ],
-        [true ,false,false,true ],
-        [true ,false,false,true ],
-        [true ,true ,true ,true ],
-      ]
+      `1 1 1 1
+       1 0 0 1
+       1 0 0 1
+       1 1 1 1`
     );
   });
 
   test("a simple 'plus' layout evolves in stages", () => {
-    const life = gameOfLifeFrom2dArray([
-      [0,1,0],
-      [1,1,1],
-      [0,1,0],
-    ]);
+    const life = gameOfLifeFromMultilineString(
+      `0 0 0 0 0
+       0 0 1 0 0
+       0 1 1 1 0
+       0 0 1 0 0
+       0 0 0 0 0`);
 
     life.stepForward();
-    assertArrayEquivalence("layout contains the expected live cells",
+    assertLayoutsMatch("first layout update",
       life.layout,
-      [
-        [true ,true ,true ],
-        [true ,false,true ],
-        [true ,true ,true ],
-      ]
+      `0 0 0 0 0
+       0 1 1 1 0
+       0 1 0 1 0
+       0 1 1 1 0
+       0 0 0 0 0`
     );
 
     life.stepForward();
-    assertArrayEquivalence("layout still contains the same live cells",
+    assertLayoutsMatch("second layout update",
       life.layout,
-      [
-        [true ,false,true ],
-        [false,false,false],
-        [true ,false,true ],
-      ]
+      `0 0 1 0 0
+       0 1 0 1 0
+       1 0 0 0 1
+       0 1 0 1 0
+       0 0 1 0 0`
     );
 
     life.stepForward();
-    assert("layout contains only false values",
-      life.layout.every(row => row.every(cell => cell === false))
+    assertLayoutsMatch("third layout update",
+      life.layout,
+      `0 0 1 0 0
+       0 1 1 1 0
+       1 1 0 1 1
+       0 1 1 1 0
+       0 0 1 0 0`
+    );
+
+    life.stepForward();
+    assertLayoutsMatch("fourth layout update",
+      life.layout,
+      `0 1 1 1 0
+       1 0 0 0 1
+       1 0 0 0 1
+       1 0 0 0 1
+       0 1 1 1 0`
     );
   });
 
