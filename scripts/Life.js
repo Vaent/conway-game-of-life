@@ -11,7 +11,7 @@ export class Life {
       this.checkLeftBorder();
       this.checkRightBorder();
     }
-    
+
     const nextLayout = this.layout.map((row, yIndex) =>
       row.map((cell, xIndex) => {
         let liveNeighbourCount = 0;
@@ -31,45 +31,36 @@ export class Life {
   }
 
   checkTopBorder() {
-    let contiguousCount = 0;
-    for (let i = 0; i < this.layout[0].length; i++) {
-      this.layout[0][i] ? contiguousCount++ : contiguousCount = 0;
-      if (contiguousCount > 2) {
-        this.layout.unshift(new Array(this.layout[0].length).fill(false));
-        break;
-      }
-    }
+    this.checkBorder(this.layout[0].length,
+                     i => this.layout[0][i],
+                     () => this.layout.unshift(new Array(this.layout[0].length).fill(false)));
   }
 
   checkBottomBorder() {
-    let contiguousCount = 0;
-    for (let i = 0; i < this.layout[0].length; i++) {
-      this.layout[this.layout.length - 1][i] ? contiguousCount++ : contiguousCount = 0;
-      if (contiguousCount > 2) {
-        this.layout.push(new Array(this.layout[0].length).fill(false));
-        break;
-      }
-    }
+    this.checkBorder(this.layout[0].length,
+                     i => this.layout[this.layout.length - 1][i],
+                     () => this.layout.push(new Array(this.layout[0].length).fill(false)));
   }
 
   checkLeftBorder() {
-    let contiguousCount = 0;
-    for (let i = 0; i < this.layout.length; i++) {
-      this.layout[i][0] ? contiguousCount++ : contiguousCount = 0;
-      if (contiguousCount > 2) {
-        this.layout.forEach(row => row.unshift(false));
-        break;
-      }
-    }
+    this.checkBorder(this.layout.length,
+                     i => this.layout[i][0],
+                     () => this.layout.forEach(row => row.unshift(false)));
   }
 
   checkRightBorder() {
+    this.checkBorder(this.layout.length,
+                     i => this.layout[i][this.layout[0].length - 1],
+                     () => this.layout.forEach(row => row.push(false)));
+  }
+
+  checkBorder(borderLength, getCellValue, expandFunction) {
     let contiguousCount = 0;
-    for (let i = 0; i < this.layout.length; i++) {
-      this.layout[i][this.layout[0].length - 1] ? contiguousCount++ : contiguousCount = 0;
+    for (let i = 0; i < borderLength; i++) {
+      getCellValue(i) ? contiguousCount++ : contiguousCount = 0;
       if (contiguousCount > 2) {
-        this.layout.forEach(row => row.push(false));
-        break;
+        expandFunction();
+        return;
       }
     }
   }
