@@ -1,9 +1,17 @@
 export class Life {
-  constructor(layout) {
+  constructor(layout, options = {}) {
     this.layout = layout;
+    this.allowExpansion = options.allowExpansion;
   }
 
   stepForward() {
+    if (this.allowExpansion) {
+      this.checkTopBorder();
+      this.checkBottomBorder();
+      this.checkLeftBorder();
+      this.checkRightBorder();
+    }
+    
     const nextLayout = this.layout.map((row, yIndex) =>
       row.map((cell, xIndex) => {
         let liveNeighbourCount = 0;
@@ -22,6 +30,50 @@ export class Life {
     this.layout = nextLayout;
   }
 
+  checkTopBorder() {
+    let contiguousCount = 0;
+    for (let i = 0; i < this.layout[0].length; i++) {
+      this.layout[0][i] ? contiguousCount++ : contiguousCount = 0;
+      if (contiguousCount > 2) {
+        this.layout.unshift(new Array(this.layout[0].length).fill(false));
+        break;
+      }
+    }
+  }
+
+  checkBottomBorder() {
+    let contiguousCount = 0;
+    for (let i = 0; i < this.layout[0].length; i++) {
+      this.layout[this.layout.length - 1][i] ? contiguousCount++ : contiguousCount = 0;
+      if (contiguousCount > 2) {
+        this.layout.push(new Array(this.layout[0].length).fill(false));
+        break;
+      }
+    }
+  }
+
+  checkLeftBorder() {
+    let contiguousCount = 0;
+    for (let i = 0; i < this.layout.length; i++) {
+      this.layout[i][0] ? contiguousCount++ : contiguousCount = 0;
+      if (contiguousCount > 2) {
+        this.layout.forEach(row => row.unshift(false));
+        break;
+      }
+    }
+  }
+
+  checkRightBorder() {
+    let contiguousCount = 0;
+    for (let i = 0; i < this.layout.length; i++) {
+      this.layout[i][this.layout[0].length - 1] ? contiguousCount++ : contiguousCount = 0;
+      if (contiguousCount > 2) {
+        this.layout.forEach(row => row.push(false));
+        break;
+      }
+    }
+  }
+
   /**
    * Creates a representation of the game area, with each cell set to live (boolean true) or dead (false).
    *
@@ -34,14 +86,14 @@ export class Life {
    *
    * @returns {{ layout: boolean[][] }} an object representing the game area's initial state.
    */
-  static fromCoordinates(xLength, yLength, liveCells = []) {
+  static fromCoordinates(xLength, yLength, liveCells = [], options = {}) {
     const layout = [];
     for (let i = 0; i < yLength; i++)
       layout.push(new Array(xLength).fill(false));
 
     liveCells.forEach(([x, y]) => layout[y][x] = true);
 
-    return new Life(layout);
+    return new Life(layout, options);
   }
 
   /**
@@ -60,9 +112,9 @@ export class Life {
    *
    * @returns an object with initial layout based on the input layoutArray.
    */
-  static from2dArray(layoutArray) {
+  static from2dArray(layoutArray, options = {}) {
     const layout = layoutArray.map(row => row.map(cell => !!cell));
-    return new Life(layout);
+    return new Life(layout, options);
   }
 
   /**
@@ -80,13 +132,13 @@ export class Life {
    *
    * @returns an object with initial layout based on the input layoutString.
    */
-  static fromMultilineString(layoutString) {
+  static fromMultilineString(layoutString, options = {}) {
     const layoutRows = layoutString.split(/\s*?\n\s*/);
     const layout = layoutRows.map(row => row.split("")
       .map(c => parseInt(c))
       .filter(c => !isNaN(c))
       .map(c => !!c));
-    return new Life(layout);
+    return new Life(layout, options);
   }
 }
 

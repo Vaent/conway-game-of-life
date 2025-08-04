@@ -159,6 +159,26 @@ import Life from "../scripts/Life.js";
     );
   });
 
+  test("a three-cell line flips direction with each iteration", () => {
+    const horizontalLine = `0 0 0 0 0
+                            0 0 0 0 0
+                            0 1 1 1 0
+                            0 0 0 0 0
+                            0 0 0 0 0`;
+    const verticalLine = `0 0 0 0 0
+                          0 0 1 0 0
+                          0 0 1 0 0
+                          0 0 1 0 0
+                          0 0 0 0 0`;
+    const life = Life.fromMultilineString(horizontalLine);
+
+    life.stepForward();
+    assertLayoutsMatch("horizontal line has switched to vertical", life.layout, verticalLine);
+
+    life.stepForward();
+    assertLayoutsMatch("vertical line has switched to horizontal", life.layout, horizontalLine);
+  })
+
   test("a simple 'plus' layout evolves in stages", () => {
     const life = Life.fromMultilineString(
       `0 0 0 0 0
@@ -207,6 +227,80 @@ import Life from "../scripts/Life.js";
        0 1 1 1 0`
     );
   });
+
+  // Expanding game area to accommodate spreading contents
+
+  console.info("\nTESTING AUTOMATIC LAYOUT EXPANSION\n")
+
+  test("top border expands when necessary", () => {
+    const life = Life.fromMultilineString(
+      `1 1 1
+       0 0 0
+       0 0 0`,
+      { allowExpansion: true });
+
+    life.stepForward();
+
+    assertLayoutsMatch("layout has grown vertically to accommodate the vertical line",
+      life.layout,
+      `0 1 0
+       0 1 0
+       0 1 0
+       0 0 0`
+    );
+  })
+
+  test("bottom border expands when necessary", () => {
+    const life = Life.fromMultilineString(
+      `0 0 0
+       0 0 0
+       1 1 1`,
+      { allowExpansion: true });
+
+    life.stepForward();
+
+    assertLayoutsMatch("layout has grown vertically to accommodate the vertical line",
+      life.layout,
+      `0 0 0
+       0 1 0
+       0 1 0
+       0 1 0`
+    );
+  })
+
+  test("left border expands when necessary", () => {
+    const life = Life.fromMultilineString(
+      `1 0 0
+       1 0 0
+       1 0 0`,
+      { allowExpansion: true });
+
+    life.stepForward();
+
+    assertLayoutsMatch("layout has grown horizontally to accommodate the horizontal line",
+      life.layout,
+      `0 0 0 0
+       1 1 1 0
+       0 0 0 0`
+    );
+  })
+
+  test("right border expands when necessary", () => {
+    const life = Life.fromMultilineString(
+      `0 0 1
+       0 0 1
+       0 0 1`,
+      { allowExpansion: true });
+
+    life.stepForward();
+
+    assertLayoutsMatch("layout has grown horizontally to accommodate the horizontal line",
+      life.layout,
+      `0 0 0 0
+       0 1 1 1
+       0 0 0 0`
+    );
+  })
 
   console.info("\n--- TEST RUN COMPLETE ---\n");
 
