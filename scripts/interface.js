@@ -5,7 +5,8 @@ import Life from "./Life.js"
 function setUp() {
   const life = initialiseWithRandomParameters();
   const gameBoard = document.getElementById("game-board");
-  buildLifeLayoutIn(gameBoard, life);
+  buildLayout(life, gameBoard);
+  addAdvanceEventListener(life, gameBoard);
 }
 
 function initialiseWithRandomParameters() {
@@ -18,7 +19,7 @@ function initialiseWithRandomParameters() {
   return Life.fromCoordinates(xSize, ySize, liveCells);
 }
 
-function buildLifeLayoutIn(gameBoard, life) {
+function buildLayout(life, gameBoard) {
   const layoutTable = gameBoard.appendChild(document.createElement("table"));
   life.layout.forEach(row => {
     layoutTable.appendChild(document.createElement("tr"))
@@ -27,6 +28,20 @@ function buildLifeLayoutIn(gameBoard, life) {
         cell && (td.className = "live");
         return td;
       }));
+  });
+}
+
+function advanceAndRender(life, gameBoard) {
+  life.stepForward();
+  while (gameBoard.firstChild) gameBoard.removeChild(gameBoard.firstChild);
+  buildLayout(life, gameBoard);
+}
+
+function addAdvanceEventListener(life, gameBoard) {
+  document.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      advanceAndRender(life, gameBoard);
+    }
   });
 }
 
