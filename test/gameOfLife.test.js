@@ -77,7 +77,7 @@ import Life from "../scripts/Life.js";
         [true ,true ,false,false,true ],
       ]
     );
-  })
+  });
 
   test("gameOfLifeFromMultilineString strips spaces from input", () => {
     const stringLayout = `0 0 1 0 0
@@ -93,7 +93,7 @@ import Life from "../scripts/Life.js";
         [true ,true ,false,false,true ],
       ]
     );
-  })
+  });
 
   // Progressing game state
 
@@ -177,7 +177,7 @@ import Life from "../scripts/Life.js";
 
     life.stepForward();
     assertLayoutsMatch("vertical line has switched to horizontal", life.layout, horizontalLine);
-  })
+  });
 
   test("a simple 'plus' layout evolves in stages", () => {
     const life = Life.fromMultilineString(
@@ -248,7 +248,7 @@ import Life from "../scripts/Life.js";
        0 1 0
        0 0 0`
     );
-  })
+  });
 
   test("bottom border expands when necessary", () => {
     const life = Life.fromMultilineString(
@@ -266,7 +266,7 @@ import Life from "../scripts/Life.js";
        0 1 0
        0 1 0`
     );
-  })
+  });
 
   test("left border expands when necessary", () => {
     const life = Life.fromMultilineString(
@@ -283,7 +283,7 @@ import Life from "../scripts/Life.js";
        1 1 1 0
        0 0 0 0`
     );
-  })
+  });
 
   test("right border expands when necessary", () => {
     const life = Life.fromMultilineString(
@@ -300,7 +300,75 @@ import Life from "../scripts/Life.js";
        0 1 1 1
        0 0 0 0`
     );
-  })
+  });
+
+  // Toggling live/dead status of individual cells
+
+  console.info("\n--- TESTING CELL STATE TOGGLE ---\n");
+
+  test("a dead cell is made live", () => {
+    const life = Life.fromMultilineString(
+      `0 0 0
+       0 0 0`
+    );
+
+    life.toggleCellStatus(2, 1);
+
+    assertLayoutsMatch("cell [2, 1] is the only live cell",
+      life.layout,
+      `0 0 0
+       0 0 1`
+    );
+  });
+
+  test("a live cell is made dead", () => {
+    const life = Life.fromMultilineString(
+      `0 1 0
+       0 1 0`
+    );
+
+    life.toggleCellStatus(1, 0);
+
+    assertLayoutsMatch("cell [1, 0] is dead, other cells are unchanged",
+      life.layout,
+      `0 0 0
+       0 1 0`
+    );
+  });
+
+  test("consecutive toggles are all applied", () => {
+    const life = Life.fromMultilineString(
+      `0 1 0
+       1 1 1`
+    );
+
+    life.toggleCellStatus(1, 1); // live -> dead
+    life.toggleCellStatus(2, 0); // dead -> live
+    life.toggleCellStatus(1, 1); // second toggle returns this cell to its original live state
+    life.toggleCellStatus(2, 1); // live -> dead
+
+    assertLayoutsMatch("the expected transformations have been applied",
+      life.layout,
+      `0 1 1
+       1 1 0`
+    );
+  });
+
+  test("a reference outside the grid has no effect", () => {
+    const life = Life.fromMultilineString(
+      `0 1 1
+       0 1 0`
+    );
+
+    life.toggleCellStatus(3, 0);
+    life.toggleCellStatus(1, 2);
+
+    assertLayoutsMatch("the layout is unchanged",
+      life.layout,
+      `0 1 1
+       0 1 0`
+    );
+  });
 
   console.info("\n--- TEST RUN COMPLETE ---\n");
 

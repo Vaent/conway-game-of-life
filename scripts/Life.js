@@ -65,15 +65,26 @@ export class Life {
     }
   }
 
+  toggleCellStatus(x, y) {
+    if (y >= this.layout.length || x >= this.layout[y].length) return;
+
+    this.layout[y][x] = !this.layout[y][x];
+  }
+
+  // STATIC FACTORY METHODS
+
   /**
    * Creates a representation of the game area, with each cell set to live (boolean true) or dead (false).
+   *
+   * Note: since orientation and direction have no bearing on the game's progression, the designation of 'x' and 'y' axes
+   * is somewhat arbitrary, and is mainly for compatibility with the other factory methods.
    *
    * @param {number} xLength 'horizontal length' of the grid i.e. number of columns. Should be a positive integer.
    * @param {number} yLength 'vertical height' of the grid i.e. number of rows. Should be a positive integer.
    * @param {Array} liveCells a list of coordinates in the grid which should be set live in the initial state.
    * Each point should be an array containing two integers: [x, y] indicating column/row index respectively.
    * Index [0, 0] is considered to be the 'top left' cell; incrementing x moves to the right, incrementing y moves down.
-   * Example: [[0, 1], [1, 1]] makes the first two cells live in the second row of the game area.
+   * Example: [[0, 1], [1, 1]] makes the leftmost two cells live, in the second row from the top.
    *
    * @returns {{ layout: boolean[][] }} an object representing the game area's initial state.
    */

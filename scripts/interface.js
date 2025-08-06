@@ -24,12 +24,18 @@ function initialiseLife() {
 }
 
 function buildLayout(life, gameBoard) {
+  while (gameBoard.firstChild) gameBoard.removeChild(gameBoard.firstChild);
   const layoutTable = gameBoard.appendChild(document.createElement("table"));
-  life.layout.forEach(row => {
+  life.layout.forEach((row, yIndex) => {
     layoutTable.appendChild(document.createElement("tr"))
-      .append(...row.map(cell => {
+      .append(...row.map((cell, xIndex) => {
         const td = document.createElement("td");
         cell && (td.className = "live");
+        td.addEventListener("click", () => {
+          // when a cell is clicked, toggle the status in Life of the clicked cell, then refresh the display
+          life.toggleCellStatus(xIndex, yIndex);
+          buildLayout(life, gameBoard);
+        });
         return td;
       }));
   });
@@ -37,7 +43,6 @@ function buildLayout(life, gameBoard) {
 
 function advanceAndRender(life, gameBoard) {
   life.stepForward();
-  while (gameBoard.firstChild) gameBoard.removeChild(gameBoard.firstChild);
   buildLayout(life, gameBoard);
 }
 
