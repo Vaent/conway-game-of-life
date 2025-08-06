@@ -3,20 +3,24 @@
 import Life from "./Life.js"
 
 function setUp() {
-  const life = initialiseWithRandomParameters();
+  const life = initialiseLife();
   const gameBoard = document.getElementById("game-board");
   buildLayout(life, gameBoard);
   addAdvanceEventListener(life, gameBoard);
 }
 
-function initialiseWithRandomParameters() {
+function initialiseLife() {
   const xSize = Math.floor(Math.random() * 10) + 10;
   const ySize = Math.floor(Math.random() * 10) + 10;
   const liveCells = [];
   for (let x = 0; x < xSize; x++)
     for (let y = 0; y < ySize; y++)
       if (Math.random() < 0.2) liveCells.push([x, y]);
-  return Life.fromCoordinates(xSize, ySize, liveCells);
+  const queryParams = new URLSearchParams(window.location.search);
+  const options = {
+    allowExpansion: queryParams.get("autoexpand") === "true",
+  };
+  return Life.fromCoordinates(xSize, ySize, liveCells, options);
 }
 
 function buildLayout(life, gameBoard) {
