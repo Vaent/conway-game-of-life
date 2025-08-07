@@ -1,6 +1,7 @@
 export class Life {
   constructor(layout, options = {}) {
     this.layout = layout;
+    this.progressions = 0;
     this.allowExpansion = options.allowExpansion;
   }
 
@@ -28,6 +29,7 @@ export class Life {
     );
 
     this.layout = nextLayout;
+    ++this.progressions;
   }
 
   checkTopBorder() {

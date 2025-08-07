@@ -304,7 +304,7 @@ import Life from "../scripts/Life.js";
 
   // Toggling live/dead status of individual cells
 
-  console.info("\n--- TESTING CELL STATE TOGGLE ---\n");
+  console.info("\nTESTING CELL STATE TOGGLE\n");
 
   test("a dead cell is made live", () => {
     const life = Life.fromMultilineString(
@@ -369,6 +369,19 @@ import Life from "../scripts/Life.js";
        0 1 0`
     );
   });
+
+  // Life metadata
+
+  console.info("\nTESTING STATS RETRIEVAL\n");
+
+  test("Number of times advanced", () => {
+    const life = Life.fromCoordinates(1, 1);
+    assert("Life has not advanced initally", life.progressions === 0);
+    life.stepForward();
+    assert("Life has advanced once", life.progressions === 1);
+    life.stepForward();
+    assert("Life has advanced twice", life.progressions === 2);
+  })
 
   console.info("\n--- TEST RUN COMPLETE ---\n");
 
