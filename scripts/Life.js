@@ -2,6 +2,7 @@ export class Life {
   constructor(layout, options = {}) {
     this.layout = layout;
     this.progressions = 0;
+    this.history = [];
     this.allowExpansion = options.allowExpansion;
   }
 
@@ -28,6 +29,7 @@ export class Life {
       })
     );
 
+    this.history.push(this.layout);
     this.layout = nextLayout;
     ++this.progressions;
   }

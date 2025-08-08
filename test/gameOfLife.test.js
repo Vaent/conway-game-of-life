@@ -374,14 +374,42 @@ import Life from "../scripts/Life.js";
 
   console.info("\nTESTING STATS RETRIEVAL\n");
 
-  test("Number of times advanced", () => {
+  test("reports the number of times Life has progressed", () => {
     const life = Life.fromCoordinates(1, 1);
     assert("Life has not advanced initally", life.progressions === 0);
     life.stepForward();
     assert("Life has advanced once", life.progressions === 1);
     life.stepForward();
     assert("Life has advanced twice", life.progressions === 2);
-  })
+  });
+
+  test("retains a history of previous layouts", () => {
+    const firstLayout =  `0 0 1 1
+                          1 0 0 1
+                          1 0 0 0`;
+
+    const secondLayout = `0 0 1 1
+                          0 1 1 1
+                          0 0 0 0`;
+
+    const thirdLayout =  `0 1 0 1
+                          0 1 0 1
+                          0 0 1 0`;
+
+    const life = Life.fromMultilineString(firstLayout);
+    assertArrayEquivalence("history is initially empty", life.history, []);
+
+    life.stepForward();
+    assertLayoutsMatch("layout is updated", life.layout, secondLayout);
+    assert("history contains one entry", life.history.length === 1);
+    assertLayoutsMatch("history contains the original layout", life.history[0], firstLayout);
+
+    life.stepForward();
+    assertLayoutsMatch("layout is updated", life.layout, thirdLayout);
+    assert("history contains two entries", life.history.length === 2);
+    assertLayoutsMatch("first history entry is the oldest layout", life.history[0], firstLayout);
+    assertLayoutsMatch("second history entry is the more recent previous layout", life.history[1], secondLayout);
+  });
 
   console.info("\n--- TEST RUN COMPLETE ---\n");
 

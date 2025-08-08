@@ -21,7 +21,7 @@ export const assert = (message, assertion) => {
 }
 
 export const assertArrayEquivalence = (message, arrayToTest, expectedArray) => {
-  assert("arrays are the same length", arrayToTest.length === expectedArray.length);
+  assert(`${message} > arrays are the same length`, arrayToTest.length === expectedArray.length);
   arrayToTest.forEach((element, index) => {
     const expectedElement = expectedArray[index];
     if (element instanceof Array) {
