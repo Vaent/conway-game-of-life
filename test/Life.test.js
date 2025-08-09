@@ -370,9 +370,9 @@ import Life from "../scripts/Life.js";
     );
   });
 
-  // Life metadata
+  // Analytics
 
-  console.info("\nTESTING STATS RETRIEVAL\n");
+  console.info("\nTESTING ANALYTICS RETRIEVAL\n");
 
   test("reports the number of times Life has progressed", () => {
     const life = Life.fromCoordinates(1, 1);
@@ -381,6 +381,28 @@ import Life from "../scripts/Life.js";
     assert("Life has advanced once", life.progressions === 1);
     life.stepForward();
     assert("Life has advanced twice", life.progressions === 2);
+  });
+
+  test("reports when the layout has become static", () => {
+    const blockGeneratingLayout = `0 0 1 0
+                                   0 1 0 0
+                                   0 0 1 0
+                                   0 1 0 0`;
+    const blockLayout = `0 0 0 0
+                         0 1 1 0
+                         0 1 1 0
+                         0 0 0 0`;
+
+    const life = Life.fromMultilineString(blockGeneratingLayout);
+    assert("life has not yet repeated a consecutive layout", life.isStatic() === false);
+
+    life.stepForward();
+    assertLayoutsMatch("life is now a simple block", life.layout, blockLayout);
+    assert("life has still not repeated a consecutive layout", life.isStatic() === false);
+
+    life.stepForward();
+    assertLayoutsMatch("life is still a simple block", life.layout, blockLayout);
+    assert("life has repeated a consecutive layout", life.isStatic() === true);
   });
 
   test("retains a history of previous layouts", () => {

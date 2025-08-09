@@ -1,3 +1,5 @@
+import { layoutsAreEquivalent } from "./util.js";
+
 export class Life {
   constructor(layout, options = {}) {
     this.layout = layout;
@@ -30,8 +32,11 @@ export class Life {
       })
     );
 
-    this.history.push(this.layout);
+    if (layoutsAreEquivalent(this.layout, nextLayout)) this.layoutIsStatic = true;
+
+    if (!(this.maxHistory < 1)) this.history.push(this.layout);
     while (this.history.length > this.maxHistory) this.history.shift();
+
     this.layout = nextLayout;
     ++this.progressions;
   }
@@ -70,6 +75,8 @@ export class Life {
       }
     }
   }
+
+  isStatic = () => !!this.layoutIsStatic;
 
   toggleCellStatus(x, y) {
     if (y >= this.layout.length || x >= this.layout[y].length) return;
