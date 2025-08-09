@@ -411,6 +411,33 @@ import Life from "../scripts/Life.js";
     assertLayoutsMatch("second history entry is the more recent previous layout", life.history[1], secondLayout);
   });
 
+  test("history can be limited via a constructor option", () => {
+    const firstLayout =  `0 0 1 1
+                          1 0 0 1
+                          1 0 0 0`;
+
+    const secondLayout = `0 0 1 1
+                          0 1 1 1
+                          0 0 0 0`;
+
+    const thirdLayout =  `0 1 0 1
+                          0 1 0 1
+                          0 0 1 0`;
+
+    const life = Life.fromMultilineString(firstLayout, { maxHistory: 1 });
+    assertArrayEquivalence("history is initially empty", life.history, []);
+
+    life.stepForward();
+    assertLayoutsMatch("layout is updated", life.layout, secondLayout);
+    assert("history contains one entry", life.history.length === 1);
+    assertLayoutsMatch("history contains the original layout", life.history[0], firstLayout);
+
+    life.stepForward();
+    assertLayoutsMatch("layout is updated", life.layout, thirdLayout);
+    assert("history still contains only one entry", life.history.length === 1);
+    assertLayoutsMatch("history entry is the most recent layout", life.history[0], secondLayout);
+  });
+
   console.info("\n--- TEST RUN COMPLETE ---\n");
 
 })();

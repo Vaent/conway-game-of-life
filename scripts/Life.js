@@ -4,6 +4,7 @@ export class Life {
     this.progressions = 0;
     this.history = [];
     this.allowExpansion = options.allowExpansion;
+    this.maxHistory = options.maxHistory;
   }
 
   stepForward() {
@@ -30,6 +31,7 @@ export class Life {
     );
 
     this.history.push(this.layout);
+    while (this.history.length > this.maxHistory) this.history.shift();
     this.layout = nextLayout;
     ++this.progressions;
   }
